@@ -2,31 +2,42 @@ package com.example.atlysimdb.bl.network.repo
 
 import androidx.multidex.BuildConfig
 import com.example.atlysimdb.bl.cache.dao.MovieDao
-import com.example.atlysimdb.bl.cache.entity.Movie
+import com.example.atlysimdb.bl.cache.mapper.MovieMapper
 import com.example.atlysimdb.bl.network.api.MovieApiService
+import com.example.atlysimdb.bl.network.domainData.Movie
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
 
 class MovieRepository @Inject constructor(
-    private val movieApiService: MovieApiService, private val movieDao: MovieDao
+    private val movieApiService: MovieApiService,
+    private val movieDao: MovieDao,
+    private val movieMapper: MovieMapper
 ) {
     suspend fun getMovies(): Flow<List<Movie>> = flow {
         try {
-            val movies =
+            val networkMovies =
                 movieApiService.getTrendingMovies(apiKey = BuildConfig.TMDB_API_KEY).results
-            movieDao.insertMovies(movies)
-            emit(movies)
+            val entities = networkMovies.map { movieMapper.networkToEntity(it) }
+            movieDao.insertMovies(entities)
+            emit(movieMapper.networksToDomain(networkMovies))
         } catch (e: IOException) {
-            movieDao.getMovies().collect { emit(it) }
+            movieDao.getMovies().collect { entities ->
+                emit(movieMapper.entitiesToDomain(entities))
+            }
         } catch (e: HttpException) {
-            movieDao.getMovies().collect { emit(it) }
+            movieDao.getMovies().collect { entities ->
+                emit(movieMapper.entitiesToDomain(entities))
+            }
         }
     }
 
     fun searchMovies(query: String): Flow<List<Movie>> {
-        return movieDao.searchMovies("%$query%")
+        return movieDao.searchMovies("%$query%").map { entities ->
+            movieMapper.entitiesToDomain(entities)
+        }
     }
 }

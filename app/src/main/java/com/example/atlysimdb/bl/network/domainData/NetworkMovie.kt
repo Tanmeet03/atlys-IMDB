@@ -1,12 +1,8 @@
-package com.example.atlysimdb.bl.cache.entity
+package com.example.atlysimdb.bl.network.domainData
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
-@Entity(tableName = "movies")
-data class Movie(
-    @PrimaryKey
+data class NetworkMovie(
     @SerializedName("id") val id: Int,
     @SerializedName("title") val title: String,
     @SerializedName("overview") val overview: String,
@@ -15,6 +11,6 @@ data class Movie(
     @SerializedName("poster_path") val posterPath: String?
 )
 
-data class MovieResponse(
-    @SerializedName("results") val results: List<Movie>
+data class NetworkMovieResponse(
+    @SerializedName("results") val results: List<NetworkMovie>
 )
