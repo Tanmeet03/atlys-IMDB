@@ -1,6 +1,5 @@
 package com.example.atlysimdb.bl.network.repo
 
-import androidx.multidex.BuildConfig
 import com.example.atlysimdb.bl.cache.dao.MovieDao
 import com.example.atlysimdb.bl.cache.mapper.MovieMapper
 import com.example.atlysimdb.bl.network.api.MovieApiService
@@ -20,7 +19,7 @@ class MovieRepository @Inject constructor(
     suspend fun getMovies(): Flow<List<Movie>> = flow {
         try {
             val networkMovies =
-                movieApiService.getTrendingMovies(apiKey = BuildConfig.TMDB_API_KEY).results
+                movieApiService.getTrendingMovies(apiKey = "5038c20449c90b274d18da63e34254ec").results
             val entities = networkMovies.map { movieMapper.networkToEntity(it) }
             movieDao.insertMovies(entities)
             emit(movieMapper.networksToDomain(networkMovies))
