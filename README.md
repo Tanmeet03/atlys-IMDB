@@ -33,7 +33,7 @@ customization.
 - [X]  Functionality: Correct implementation of all listed tasks.
 - [X]  Show us your work through your commit history.
 
-## Extra Task
+## Bonus Task
 
 - [X]  Setting screen for toggling theme
 
