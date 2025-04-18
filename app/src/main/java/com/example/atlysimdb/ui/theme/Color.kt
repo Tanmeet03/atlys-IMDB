@@ -8,10 +8,11 @@ val Gray400 = Color(0xFFE3E8EF)
 val White = Color(0xFFFFFFFF)
 val darkSurface = Color(0xFF222222)
 val darkBackground = Color(0xFF121212)
+val lightSurface = Color(0xFFE5E4E2)
 
 
 fun lightColors() = CustomColors(
-    surface = White,
+    surface = lightSurface,
     gray200 = Gray200,
     black = Black,
     gray400 = Gray400,

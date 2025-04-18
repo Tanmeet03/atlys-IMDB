@@ -29,7 +29,6 @@ fun CustomSearchBar(
         onValueChange = onValueChange,
         modifier = Modifier
             .fillMaxWidth(0.9f)
-            .padding(vertical = 8.dp)
             .background(
                 color = CustomTheme.colors.White, shape = RoundedCornerShape(8.dp)
             )
@@ -41,7 +40,11 @@ fun CustomSearchBar(
         singleLine = true,
         decorationBox = { innerTextField ->
             Row(
-                modifier = Modifier.padding(8.dp), verticalAlignment = Alignment.CenterVertically
+                modifier = Modifier
+                    .padding(16.dp)
+                    .background(
+                        color = CustomTheme.colors.White
+                    ), verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
                     imageVector = Icons.Default.Search,

@@ -1,5 +1,6 @@
 package com.example.atlysimdb.bl.network.vm
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.atlysimdb.bl.network.usecase.GetTrendingMoviesUseCase
@@ -39,6 +40,7 @@ class MovieListViewModel @Inject constructor(
             is MovieListIntent.LoadMovies -> processAction(MovieListAction.FetchMovies)
             is MovieListIntent.SearchMovies -> processAction(MovieListAction.SearchMovies(intent.query))
             is MovieListIntent.SelectMovie -> viewModelScope.launch {
+                Log.i("tanmeetss", "processIntent - ${intent.movieId}")
                 _effect.send(MovieListEffect.NavigateToDetail(intent.movieId))
             }
         }

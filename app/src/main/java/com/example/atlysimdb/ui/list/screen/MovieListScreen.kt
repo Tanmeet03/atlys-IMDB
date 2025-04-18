@@ -1,5 +1,6 @@
 package com.example.atlysimdb.ui.list.screen
 
+import android.util.Log
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.icons.Icons
@@ -37,7 +39,6 @@ import com.example.atlysimdb.ui.list.components.MovieItem
 import com.example.atlysimdb.ui.list.effect.MovieListEffect
 import com.example.atlysimdb.ui.list.intent.MovieListIntent
 import com.example.atlysimdb.ui.theme.CustomTheme
-import com.example.atlysimdb.ui.theme.ThemePreference
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -51,6 +52,7 @@ fun MovieListScreen(
         viewModel.effect.collectLatest { effect ->
             when (effect) {
                 is MovieListEffect.NavigateToDetail -> {
+                    Log.i("tanmeetss","processIntent - ${effect.movieId}")
                     navController.navigate("movie_detail/${effect.movieId}")
                 }
 
@@ -66,6 +68,7 @@ fun MovieListScreen(
             .fillMaxSize()
             .background(CustomTheme.colors.Surface)
             .padding(16.dp)
+            .systemBarsPadding()
     ) {
 
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -120,6 +123,7 @@ fun MovieListScreen(
                         items(targetState.movies.size) { index ->
                             val movie = targetState.movies[index]
                             MovieItem(movie = movie) {
+                                Log.i("tanmeetss","id - ${movie.id}")
                                 viewModel.processIntent(MovieListIntent.SelectMovie(movie.id))
                             }
                         }

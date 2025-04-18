@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,10 +34,11 @@ fun SettingsScreen(
             .fillMaxSize()
             .background(CustomTheme.colors.Surface)
             .padding(16.dp)
+            .systemBarsPadding()
     ) {
         Text(
             text = "Theme Settings",
-            style = CustomTheme.typography.titleMd,
+            style = CustomTheme.typography.titleLg,
             color = CustomTheme.colors.text,
             modifier = Modifier.padding(bottom = 16.dp)
         )

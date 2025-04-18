@@ -9,6 +9,13 @@ import androidx.compose.ui.unit.sp
 
 
 data class CustomTypography(
+    val titleLg: TextStyle = TextStyle(
+        fontFamily = FontFamily.inter,
+        fontWeight = FontWeight.SemiBold,
+        lineHeight = 32.sp,
+        fontSize = 24.sp,
+        letterSpacing = TextUnit(-0.40F, TextUnitType.Sp)
+    ),
     val titleMd: TextStyle = TextStyle(
         fontFamily = FontFamily.inter,
         fontWeight = FontWeight.Normal,

@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.atlysimdb.ui.detail.MovieDetailScreen
 import com.example.atlysimdb.ui.list.screen.MovieListScreen
 import com.example.atlysimdb.ui.setting.SettingsScreen
 import com.example.atlysimdb.ui.theme.ThemePreference
@@ -22,7 +23,7 @@ fun MovieAppNavGraph(themePreference: ThemePreference) {
             route = "movie_detail/{movieId}",
             arguments = listOf(navArgument("movieId") { type = NavType.IntType })
         ) {
-
+            MovieDetailScreen(navController = navController)
         }
         composable("settings") {
             SettingsScreen(navController = navController, themePreference = themePreference)
