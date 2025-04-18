@@ -8,33 +8,43 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.atlysimdb.bl.network.vm.MovieListViewModel
+import com.example.atlysimdb.ui.list.components.CustomSearchBar
 import com.example.atlysimdb.ui.list.components.MovieItem
 import com.example.atlysimdb.ui.list.effect.MovieListEffect
 import com.example.atlysimdb.ui.list.intent.MovieListIntent
+import com.example.atlysimdb.ui.theme.CustomTheme
+import com.example.atlysimdb.ui.theme.ThemePreference
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
-fun MovieListScreen(navController: NavController, viewModel: MovieListViewModel = hiltViewModel()) {
+fun MovieListScreen(
+    navController: NavController,
+    viewModel: MovieListViewModel = hiltViewModel()
+) {
     val state = viewModel.state.collectAsState().value
 
     LaunchedEffect(Unit) {
@@ -54,15 +64,26 @@ fun MovieListScreen(navController: NavController, viewModel: MovieListViewModel 
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(CustomTheme.colors.Surface)
             .padding(16.dp)
-            .background(MaterialTheme.colorScheme.background)
     ) {
-        TextField(
-            value = state.searchQuery,
-            onValueChange = { viewModel.processIntent(MovieListIntent.SearchMovies(it)) },
-            label = { Text("Search Movies") },
-            modifier = Modifier.fillMaxWidth()
-        )
+
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            CustomSearchBar(
+                value = state.searchQuery,
+                onValueChange = { viewModel.processIntent(MovieListIntent.SearchMovies(it)) })
+
+            IconButton(
+                modifier = Modifier.size(40.dp), onClick = { navController.navigate("settings") }) {
+                Icon(
+                    imageVector = Icons.Default.Settings,
+                    contentDescription = "Settings",
+                    tint = Color.Gray,
+                    modifier = Modifier.size(24.dp) // standard icon size
+                )
+            }
+        }
+
         Spacer(modifier = Modifier.height(16.dp))
 
         AnimatedContent(
@@ -79,7 +100,7 @@ fun MovieListScreen(navController: NavController, viewModel: MovieListViewModel 
 
                 targetState.error != null -> {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Text(text = targetState.error, color = MaterialTheme.colorScheme.error)
+                        Text(text = targetState.error, color = CustomTheme.colors.Gray400)
                     }
                 }
 

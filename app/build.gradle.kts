@@ -80,6 +80,8 @@ dependencies {
     // Compose
     implementation(platform(libs.compose.bom))
     implementation(libs.bundles.compose)
+    // Jetpack DataStore
+    implementation(libs.datastore.preferences)
 
     // Core Android
     implementation(libs.androidx.core)

@@ -1,63 +1,54 @@
 package com.example.atlysimdb.ui.theme
 
-import android.app.Activity
-import android.os.Build
+import android.util.Log
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
-import androidx.compose.material3.lightColorScheme
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.ProvideTextStyle
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
-
-private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = white,
-    tertiary = Pink80,
-    background = white,
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F)
-)
-
-private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = white,
-    tertiary = Pink40,
-    background = white,
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F)
-)
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 
 @Composable
 fun AtlysIMDBTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
-    content: @Composable () -> Unit
+    spaces: CustomSpaces = CustomTheme.spaces,
+    typography: CustomTypography = CustomTheme.typography,
+    colors: CustomColors = lightColors(),
+    darkColors: CustomColors = darkColors(),
+    themeMode: ThemeMode = ThemeMode.SYSTEM,
+    content: @Composable () -> Unit,
 ) {
-    val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        }
-
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
+    val isDarkTheme = when (themeMode) {
+        ThemeMode.DARK -> true
+        ThemeMode.LIGHT -> false
+        ThemeMode.SYSTEM -> isSystemInDarkTheme()
+    }
+    val currentColor = remember(themeMode) {
+        if (isDarkTheme) darkColors else colors
+    }.apply {
+        updateColors(
+            surface = if (isDarkTheme) darkColors.Surface else colors.Surface,
+            gray200 = if (isDarkTheme) darkColors.Gray200 else colors.Gray200,
+            black = if (isDarkTheme) darkColors.text else colors.text,
+            gray400 = if (isDarkTheme) darkColors.Gray400 else colors.Gray400,
+            white = if (isDarkTheme) darkColors.White else colors.White,
+            isLight = !isDarkTheme
+        )
     }
 
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = Typography,
-        content = content
-    )
+    CompositionLocalProvider(
+        LocalColors provides currentColor,
+        LocalSpaces provides spaces,
+        LocalTypography provides typography,
+    ) {
+        ProvideTextStyle(typography.bodyMd.copy(color = CustomTheme.colors.Gray200), content = {
+            Surface(
+                modifier = Modifier.fillMaxSize(),
+                color = CustomTheme.colors.Surface
+            ) {
+                content()
+            }
+        })
+    }
 }

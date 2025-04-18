@@ -10,6 +10,7 @@ import com.example.atlysimdb.bl.network.api.MovieApiService
 import com.example.atlysimdb.bl.network.repo.MovieRepository
 import com.example.atlysimdb.bl.network.usecase.GetTrendingMoviesUseCase
 import com.example.atlysimdb.bl.network.usecase.SearchMoviesUseCase
+import com.example.atlysimdb.ui.theme.ThemePreference
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -30,6 +31,12 @@ object AppModule {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(MovieApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideThemePreference(@ApplicationContext context: Context): ThemePreference {
+        return ThemePreference(context)
     }
 
     @Provides
