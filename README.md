@@ -1,4 +1,4 @@
-# AtlysIMDB (App Name) - Movie Database App
+# Atlys IMDB (App Name) - Movie Database App
 
 https://github.com/user-attachments/assets/1056b07a-39a2-49a3-86a5-9629620d618d
 
