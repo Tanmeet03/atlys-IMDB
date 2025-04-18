@@ -33,6 +33,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -54,6 +55,11 @@ fun MovieListScreen(
     var searchQuery by remember { mutableStateOf("") }
     var hasPrefilledQuery by remember { mutableStateOf(false) }
 
+    val configuration = LocalConfiguration.current
+    val isLandscape =
+        configuration.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE
+    val gridColumns = if (isLandscape) 4 else 2
+
     LaunchedEffect(Unit) {
         if (!hasPrefilledQuery) {
             searchQuery = state.lastQuery
@@ -68,7 +74,6 @@ fun MovieListScreen(
         }
     }
 
-    // Trigger initial load only on first composition with no data
     LaunchedEffect(Unit) {
         if (state.movies.isEmpty() && !viewModel.hasInitialLoad) {
             viewModel.processIntent(MovieListIntent.LoadMovies)
@@ -138,7 +143,7 @@ fun MovieListScreen(
 
                 else -> {
                     LazyVerticalGrid(
-                        columns = GridCells.Fixed(2),
+                        columns = GridCells.Fixed(gridColumns),
                         horizontalArrangement = Arrangement.spacedBy(16.dp),
                         verticalArrangement = Arrangement.spacedBy(16.dp),
                         modifier = Modifier.fillMaxSize()

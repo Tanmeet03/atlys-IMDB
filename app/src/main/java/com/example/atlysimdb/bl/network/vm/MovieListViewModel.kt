@@ -100,15 +100,24 @@ class MovieListViewModel @Inject constructor(
 
         viewModelScope.launch {
             _state.value = _state.value.copy(isLoading = true, error = null)
-            searchMoviesUseCase(query).collectLatest { movies ->
-                _state.value = _state.value.copy(
-                    movies = movies,
-                    isLoading = false,
-                    lastQuery = query // 👈 update lastQuery in state
-                )
-                savedStateHandle["searchQuery"] = query
-                savedStateHandle["movies"] = movies
+            try {
+                searchMoviesUseCase(query).collectLatest { movies ->
+                    _state.value = _state.value.copy(
+                        movies = movies, isLoading = false, lastQuery = query
+                    )
+                    savedStateHandle["searchQuery"] = query
+                    savedStateHandle["movies"] = movies
+                }.runCatching {
+                    if (this != null) {
+                        _state.value = _state.value.copy(isLoading = false)
+                        _effect.send(MovieListEffect.ShowError("No movies found"))
+                    }
+                }
+            } catch (e: Exception) {
+                _state.value = _state.value.copy(isLoading = false)
+                _effect.send(MovieListEffect.ShowError("Failed to load movies: ${e.message}"))
             }
+
         }
     }
 

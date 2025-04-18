@@ -48,7 +48,6 @@ fun MovieDetailScreen(
 ) {
     val state = viewModel.state.collectAsState().value
 
-    // Handle effects (e.g., navigation, error toasts)
     LaunchedEffect(Unit) {
         viewModel.effect.collectLatest { effect ->
             when (effect) {
@@ -57,14 +56,12 @@ fun MovieDetailScreen(
                 }
 
                 is MovieDetailEffect.ShowError -> {
-                    // In a real app, show a Snackbar or Toast
                     println("Error: ${effect.message}")
                 }
             }
         }
     }
 
-    // Handle back button
     BackHandler {
         viewModel.processIntent(MovieDetailIntent.BackPressed)
     }
@@ -101,13 +98,12 @@ fun MovieDetailContent(movie: Movie, viewModel: MovieDetailViewModel) {
             .fillMaxSize()
             .systemBarsPadding()
     ) {
-        // Scrollable content
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(
-                    top = 56.dp, start = 16.dp, end = 16.dp, bottom = 16.dp
-                ) // padding top to avoid overlap with the fixed button
+                    top = 70.dp, start = 16.dp, end = 16.dp, bottom = 16.dp
+                )
                 .verticalScroll(rememberScrollState())
         ) {
             AsyncImage(
@@ -133,7 +129,7 @@ fun MovieDetailContent(movie: Movie, viewModel: MovieDetailViewModel) {
             )
         }
 
-        // Fixed back arrow at the top
+
         IconButton(
             onClick = { viewModel.processIntent(MovieDetailIntent.BackPressed) },
             modifier = Modifier

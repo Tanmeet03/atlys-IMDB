@@ -22,7 +22,6 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        // Read tmdb_api_key from local.properties
         val localProperties = Properties()
         val localPropertiesFile = rootProject.file("local.properties")
         if (localPropertiesFile.exists()) {
@@ -89,6 +88,8 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.navigation)
+
+
 
     // Hilt
     implementation(libs.hilt.android)
