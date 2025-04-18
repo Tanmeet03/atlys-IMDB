@@ -1,6 +1,5 @@
 package com.example.atlysimdb.ui.list.screen
 
-import android.util.Log
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -27,6 +26,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -39,20 +42,40 @@ import com.example.atlysimdb.ui.list.components.MovieItem
 import com.example.atlysimdb.ui.list.effect.MovieListEffect
 import com.example.atlysimdb.ui.list.intent.MovieListIntent
 import com.example.atlysimdb.ui.theme.CustomTheme
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun MovieListScreen(
-    navController: NavController,
-    viewModel: MovieListViewModel = hiltViewModel()
+    navController: NavController, viewModel: MovieListViewModel = hiltViewModel()
 ) {
     val state = viewModel.state.collectAsState().value
 
+    var searchQuery by remember { mutableStateOf("") }
+    var hasPrefilledQuery by remember { mutableStateOf(false) }
+
     LaunchedEffect(Unit) {
+        if (!hasPrefilledQuery) {
+            searchQuery = state.lastQuery
+            hasPrefilledQuery = true
+        }
+    }
+
+    LaunchedEffect(searchQuery) {
+        delay(400)
+        if (searchQuery != state.lastQuery) {
+            viewModel.processIntent(MovieListIntent.SearchMovies(searchQuery))
+        }
+    }
+
+    // Trigger initial load only on first composition with no data
+    LaunchedEffect(Unit) {
+        if (state.movies.isEmpty() && !viewModel.hasInitialLoad) {
+            viewModel.processIntent(MovieListIntent.LoadMovies)
+        }
         viewModel.effect.collectLatest { effect ->
             when (effect) {
                 is MovieListEffect.NavigateToDetail -> {
-                    Log.i("tanmeetss","processIntent - ${effect.movieId}")
                     navController.navigate("movie_detail/${effect.movieId}")
                 }
 
@@ -70,11 +93,11 @@ fun MovieListScreen(
             .padding(16.dp)
             .systemBarsPadding()
     ) {
-
         Row(verticalAlignment = Alignment.CenterVertically) {
             CustomSearchBar(
-                value = state.searchQuery,
-                onValueChange = { viewModel.processIntent(MovieListIntent.SearchMovies(it)) })
+                value = searchQuery, onValueChange = {
+                    searchQuery = it
+                })
 
             IconButton(
                 modifier = Modifier.size(40.dp), onClick = { navController.navigate("settings") }) {
@@ -82,7 +105,7 @@ fun MovieListScreen(
                     imageVector = Icons.Default.Settings,
                     contentDescription = "Settings",
                     tint = Color.Gray,
-                    modifier = Modifier.size(24.dp) // standard icon size
+                    modifier = Modifier.size(24.dp)
                 )
             }
         }
@@ -123,7 +146,6 @@ fun MovieListScreen(
                         items(targetState.movies.size) { index ->
                             val movie = targetState.movies[index]
                             MovieItem(movie = movie) {
-                                Log.i("tanmeetss","id - ${movie.id}")
                                 viewModel.processIntent(MovieListIntent.SelectMovie(movie.id))
                             }
                         }

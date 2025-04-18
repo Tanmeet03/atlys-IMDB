@@ -1,6 +1,5 @@
 package com.example.atlysimdb.ui.detail
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
@@ -14,11 +13,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,6 +31,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -69,7 +74,6 @@ fun MovieDetailScreen(
         transitionSpec = { fadeIn() togetherWith fadeOut() },
         label = "MovieDetailStateAnimation",
     ) { targetState ->
-        Log.i("tanmeetss","MovieDetailContent AnimatedContent- ${targetState.movie}")
         when {
             targetState.isLoading -> {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -84,42 +88,65 @@ fun MovieDetailScreen(
             }
 
             targetState.movie != null -> {
-                Log.i("tanmeetss","MovieDetailContent - ${targetState.movie}")
-                MovieDetailContent(movie = targetState.movie)
+                MovieDetailContent(movie = targetState.movie, viewModel)
             }
         }
     }
 }
 
 @Composable
-fun MovieDetailContent(movie: Movie) {
-    Column(
+fun MovieDetailContent(movie: Movie, viewModel: MovieDetailViewModel) {
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
             .systemBarsPadding()
-            .verticalScroll(rememberScrollState())
     ) {
-        AsyncImage(
-            model = "https://image.tmdb.org/t/p/w500/${movie.posterPath}",
-            contentDescription = movie.title,
+        // Scrollable content
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .aspectRatio(1F)
-                .clip(RoundedCornerShape(8.dp)),
-            contentScale = ContentScale.FillBounds,
-        )
-        Spacer(modifier = Modifier.height(24.dp))
-        Text(
-            text = movie.title,
-            style = CustomTheme.typography.titleLg,
-            color = CustomTheme.colors.text
-        )
-        Spacer(modifier = Modifier.height(24.dp))
-        Text(
-            text = movie.overview,
-            style = CustomTheme.typography.bodyMd,
-            color = CustomTheme.colors.text
-        )
+                .fillMaxSize()
+                .padding(
+                    top = 56.dp, start = 16.dp, end = 16.dp, bottom = 16.dp
+                ) // padding top to avoid overlap with the fixed button
+                .verticalScroll(rememberScrollState())
+        ) {
+            AsyncImage(
+                model = "https://image.tmdb.org/t/p/w500/${movie.posterPath}",
+                contentDescription = movie.title,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(1F)
+                    .clip(RoundedCornerShape(8.dp)),
+                contentScale = ContentScale.FillBounds,
+            )
+            Spacer(modifier = Modifier.height(24.dp))
+            Text(
+                text = movie.title,
+                style = CustomTheme.typography.titleLg,
+                color = CustomTheme.colors.text
+            )
+            Spacer(modifier = Modifier.height(24.dp))
+            Text(
+                text = movie.overview,
+                style = CustomTheme.typography.bodyMd,
+                color = CustomTheme.colors.text
+            )
+        }
+
+        // Fixed back arrow at the top
+        IconButton(
+            onClick = { viewModel.processIntent(MovieDetailIntent.BackPressed) },
+            modifier = Modifier
+                .padding(16.dp)
+                .size(40.dp)
+                .align(Alignment.TopStart)
+        ) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                contentDescription = "Back",
+                tint = Color.Gray,
+                modifier = Modifier.size(24.dp)
+            )
+        }
     }
 }

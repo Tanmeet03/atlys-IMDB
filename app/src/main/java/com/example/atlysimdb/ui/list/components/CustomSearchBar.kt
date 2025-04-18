@@ -36,7 +36,7 @@ fun CustomSearchBar(
                 BorderStroke(width = 1.dp, color = CustomTheme.colors.Gray200),
                 shape = RoundedCornerShape(8.dp)
             ),
-        textStyle = CustomTheme.typography.titleMd,
+        textStyle = CustomTheme.typography.titleMd.copy(color = CustomTheme.colors.text),
         singleLine = true,
         decorationBox = { innerTextField ->
             Row(

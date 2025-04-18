@@ -32,7 +32,7 @@ class MovieMapperImpl @Inject constructor() : MovieMapper {
             overview = movieEntity.overview,
             releaseDate = movieEntity.releaseDate,
             voteAverage = movieEntity.voteAverage,
-            posterPath = movieEntity.posterPath
+            posterPath = movieEntity.posterPath ?: ""
         )
     }
 
@@ -43,7 +43,7 @@ class MovieMapperImpl @Inject constructor() : MovieMapper {
             overview = networkMovie.overview,
             releaseDate = networkMovie.releaseDate,
             voteAverage = networkMovie.voteAverage,
-            posterPath = networkMovie.posterPath
+            posterPath = networkMovie.posterPath ?: ""
         )
     }
 
